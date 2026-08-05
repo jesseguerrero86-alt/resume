@@ -78,6 +78,11 @@
             padding: 0;
         }
 
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px; /* Offset for floating fixed header */
+        }
+
         body {
             font-family: 'Inter', sans-serif, -apple-system, BlinkMacSystemFont;
             background-color: var(--bg-color);
@@ -247,12 +252,10 @@
         }
 
         /* --- PURE CSS MOBILE MENU --- */
-        /* Hide menu checkbox */
         #menu-toggle {
             display: none;
         }
 
-        /* Hamburger Button Styling */
         .hamburger-btn {
             display: none;
             flex-direction: column;
@@ -321,19 +324,6 @@
             position: relative;
         }
 
-        .avatar-inner {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-color: var(--bg-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-color);
-            font-weight: 800;
-            font-size: 2.2rem;
-        }
-
         .hero-bio h1 {
             font-size: 2.4rem;
             font-weight: 800;
@@ -396,6 +386,7 @@
         section {
             padding: 2.5rem 0;
             border-bottom: 1px solid var(--border-color);
+            outline: none;
         }
 
         section:last-of-type {
@@ -594,21 +585,6 @@
             margin: 0;
         }
 
-        /* Tabs System Content Control */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* Certification Cards */
         .cert-item {
             background: var(--card-bg);
@@ -728,7 +704,7 @@
     <!-- Glassmorphic Navbar with Pure CSS Mobile Menu -->
     <header>
         <div class="container nav-content">
-            <a href="#" class="logo" onclick="switchTab('about')">Jesse<span class="text-gradient">.Guerrero</span></a>
+            <a href="#about" class="logo" onclick="navigateToSection('about')">Jesse<span class="text-gradient">.Guerrero</span></a>
             
             <div class="nav-controls">
                 <!-- Checkbox Hack for Pure CSS/HTML Mobile Menu -->
@@ -741,9 +717,9 @@
                 </label>
 
                 <nav class="nav-links">
-                    <a href="#about" class="nav-link active" onclick="closeMobileMenu(); switchTab('about')">About</a>
-                    <a href="#certifications" class="nav-link" onclick="closeMobileMenu(); switchTab('certifications')">Certifications</a>
-                    <a href="#skills" class="nav-link" onclick="closeMobileMenu(); switchTab('skills')">Skills</a>
+                    <a href="#about" class="nav-link active" onclick="navigateToSection('about')">About</a>
+                    <a href="#certifications" class="nav-link" onclick="navigateToSection('certifications')">Certifications</a>
+                    <a href="#skills" class="nav-link" onclick="navigateToSection('skills')">Skills</a>
                 </nav>
 
                 <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme">
@@ -771,7 +747,7 @@
         <!-- Hero Section -->
         <section class="hero">
             <div class="avatar-placeholder">
-                <div class="avatar-inner">JG</div>
+                <img src="https://raw.githubusercontent.com/jesseguerrero86-alt/resume/main/img/avatar.jpg" alt="Jesse Guerrero Profile Picture" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
             </div>
             <div class="hero-bio">
                 <h1>Jesse Guerrero</h1>
@@ -802,10 +778,9 @@
             </div>
         </section>
 
-        <!-- Tab 1: About & Career Experience -->
-        <div id="about" class="tab-content active">
+        <!-- Section 1: About & Experience -->
+        <div id="about" tabindex="-1">
             <div class="two-column-layout">
-                
                 <div class="left-col">
                     <section>
                         <h2>Professional Profile</h2>
@@ -819,7 +794,6 @@
                     <section>
                         <h2>Work Experience</h2>
                         <div class="timeline">
-                            
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <div class="timeline-header">
@@ -963,7 +937,6 @@
                                     <span class="badge-green">Networking</span>
                                 </div>
                             </div>
-
                         </div>
                     </section>
 
@@ -989,7 +962,6 @@
                     <section style="padding-top: 2.5rem;">
                         <h2>Core Focus</h2>
                         <div class="tools-grid">
-                            
                             <div class="tool-card">
                                 <div class="tool-icon">
                                     <svg class="svg-icon" viewBox="0 0 24 24">
@@ -1068,16 +1040,14 @@
                                     <p>Containers/Device</p>
                                 </div>
                             </div>
-
                         </div>
                     </section>
                 </aside>
-
             </div>
         </div>
 
-        <!-- Tab 2: Certifications Section -->
-        <div id="certifications" class="tab-content">
+        <!-- Section 2: Certifications -->
+        <div id="certifications" tabindex="-1">
             <section>
                 <h2>Professional Certifications</h2>
                 
@@ -1110,8 +1080,8 @@
             </section>
         </div>
 
-        <!-- Tab 3: Full Skills Inventory -->
-        <div id="skills" class="tab-content">
+        <!-- Section 3: Skills -->
+        <div id="skills" tabindex="-1">
             <section>
                 <h2>Comprehensive Skills & Expertise</h2>
                 
@@ -1170,47 +1140,49 @@
         </div>
     </footer>
 
-    <!-- Interactive Navigation and Theme Script -->
+    <!-- JavaScript for Mobile Menu & Theme Controls -->
     <script>
-        function closeMobileMenu() {
+        function navigateToSection(targetId) {
+            // Close mobile navigation menu immediately
             const menuToggle = document.getElementById('menu-toggle');
             if (menuToggle) {
                 menuToggle.checked = false;
             }
-        }
 
-        function switchTab(tabId) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
+            // Update Active Nav Link state immediately
             const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => link.classList.remove('active'));
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === `#${targetId}`) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
 
-            const targetTab = document.getElementById(tabId);
-            if (targetTab) {
-                targetTab.classList.add('active');
+            // Focus target element directly
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.focus({ preventScroll: true });
             }
-
-            const targetLink = document.querySelector(`.nav-link[href="#${tabId}"]`);
-            if (targetLink) {
-                targetLink.classList.add('active');
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.replace('#', '');
-            if (hash && document.getElementById(hash)) {
-                switchTab(hash);
-            }
-        });
+        // Keep active link highlighting synced when scrolling manually
+        window.addEventListener('scroll', () => {
+            const sections = ['about', 'certifications', 'skills'];
+            const scrollPos = window.scrollY + 120;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const hash = window.location.hash.replace('#', '');
-            if (hash && document.getElementById(hash)) {
-                switchTab(hash);
-            }
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const top = el.offsetTop;
+                    const height = el.offsetHeight;
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                        });
+                    }
+                }
+            });
         });
 
         function toggleTheme() {
